@@ -30,9 +30,11 @@ class HoneypotResponseMiddleware(object):
                 if callable(value):
                     value = value()
                 return mark_safe(match.group() +
-                                 render_to_string('honeypot/honeypot_field.html',
-                                                  {'fieldname': settings.HONEYPOT_FIELD_NAME,
-                                                   'value': value}))
+                                 '''<div style="display: none;">
+    <label>leave this field blank to prove your humanity
+        <input type="text" name="%(fieldname)s" value="%(value)s" />
+    </label></div>''' % {'fieldname': settings.HONEYPOT_FIELD_NAME,
+                                                   'value': value})
 
             # Modify any POST forms
             response.content = _POST_FORM_RE.sub(add_honeypot_field, response.content)
